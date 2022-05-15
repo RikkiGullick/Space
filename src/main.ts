@@ -1,5 +1,6 @@
 import { Backgrounds } from "./backgrounds/backgrounds";
 import { Asteroids } from "./enemies/asteroids";
+import { Collitions } from "./enemies/collisions";
 import { BulletSystem } from "./player/bullet";
 import { Player } from "./player/player";
 import { Space } from "./scene/Space";
@@ -18,6 +19,7 @@ space.scene.add(player.mesh);
 let bullets = new BulletSystem(space.scene);
 let backgrounds = new Backgrounds(meshes.planet, space.scene);
 let asteroids = new Asteroids(meshes.rock, space.scene);
+let collitions = new Collitions(space.scene, bullets, asteroids);
 
 let tick = 0;
 space.renderer.setAnimationLoop((time) => {
@@ -26,6 +28,7 @@ space.renderer.setAnimationLoop((time) => {
   backgrounds.render(tick);
   asteroids.render(tick);
   space.renderer.render( space.scene, space.camera );
+  collitions.check();
 
   if(!(tick % 5)) {
     bullets.add(player.x - 0.08, player.y, 0.0528);

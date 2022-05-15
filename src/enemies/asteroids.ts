@@ -16,7 +16,7 @@ export class Asteroids {
     }
 
     render(tick: number) {
-        if(tick % (25 + Math.round(Math.random() * 50)) === 0) for(var i=0; i< Math.random() * 10; i++) this.addRock();
+        if(tick % (25 + Math.round(Math.random() * 2)) === 0) for(var i=0; i< Math.random() * 50; i++) this.addRock();
 
         for(var i = 0; i < this.rocks.length; i++) {
             const rock = this.rocks[i];
@@ -33,7 +33,6 @@ export class Asteroids {
                 this.scene.remove(rock.mesh);
             }
         }
-        if(tick % 100 === 0) console.log(this.rocks.length);
     }
 
     addRock() {

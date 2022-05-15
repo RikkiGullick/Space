@@ -22,7 +22,8 @@ export class BulletSystem {
             speed: speed
         });
         bullet.position.set(y, 0, x);
-
+        bullet.scale.set(Math.random() * 0.2 + 0.015, 0.0008 + Math.random() * 0.02, 0.01);
+        
         this.bullets = this.bullets.filter(x => !x.dead);
     }
 
@@ -37,7 +38,7 @@ export class BulletSystem {
             }
 
             b.sprite.position.z = b.x;
-            b.sprite.material.opacity = 0.5 + Math.random() * 2;
+            //b.sprite.material.opacity = 0.5 + Math.random() * 2;
         }
     }
 }
