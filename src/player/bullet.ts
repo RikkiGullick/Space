@@ -1,8 +1,15 @@
 import * as THREE from "three";
 
+interface IBullet {
+    x: number; 
+    y: number; 
+    sprite: THREE.Sprite;
+    dead: boolean;
+    speed: number;
+}
 export class BulletSystem {
     sprite: THREE.Sprite;
-    bullets: { x: number, y: number, sprite: THREE.Sprite, dead: boolean, speed: number }[];
+    bullets: IBullet[];
     constructor(private scene: THREE.Scene) {
         const map = new THREE.TextureLoader().load( 'assets/laser.png' );
         const material = new THREE.SpriteMaterial( { map: map } );
@@ -32,13 +39,13 @@ export class BulletSystem {
             var b = this.bullets[i];
             if(b.dead) continue;
             b.x = b.x - b.speed;
-            if(b.x < -2) {
-                this.scene.remove(b.sprite);
-                b.dead = true;
-            }
-
+            if(b.x < -2) this.remove(b);
             b.sprite.position.z = b.x;
-            //b.sprite.material.opacity = 0.5 + Math.random() * 2;
         }
+    }
+
+    remove(bullet: IBullet) {
+        this.scene.remove(bullet.sprite);
+        bullet.dead = true;
     }
 }

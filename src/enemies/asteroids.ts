@@ -1,4 +1,5 @@
 import { Mesh, Scene } from "three";
+import { ExplosionSystem } from "./explosions";
 
 interface asteroid {
     mesh: Mesh;
@@ -10,9 +11,13 @@ interface asteroid {
 }
 
 export class Asteroids {
+    rockBin: Mesh[] = [];
     rocks: asteroid[] = [];
 
-    constructor(private rock: Mesh, private scene: Scene) {
+    constructor(private rock: Mesh, private scene: Scene, private explosions: ExplosionSystem) { 
+        for(var i = 0; i < 200; i++) {
+            this.rockBin.push(this.rock.clone());
+        }
     }
 
     render(tick: number) {
@@ -28,25 +33,40 @@ export class Asteroids {
             rock.mesh.rotation.y += rock.rot.y;
             rock.mesh.rotation.z += rock.rot.z;
 
-            if(rock.x > 2) { 
-                rock.dead = true;
-                this.scene.remove(rock.mesh);
-            }
+            if(rock.x > 2) this.remove(rock);
         }
     }
 
     addRock() {
-        let mesh: Mesh = this.rock.clone();
+        if(!this.rockBin.length) return;
         this.rocks = this.rocks.filter(x => !x.dead);
-        this.rocks.push({
-            mesh: mesh,
+
+        let rock: asteroid;
+        this.rocks.push(rock = {
+            mesh: <Mesh>this.rock.clone(), //rockBin.pop(),
             x: -2,
             y: Math.random() * 2 - 1,
             dead: false,
             speed: 0.02 + Math.random() / 250,
             rot: { x: (Math.random() - 0.5) / 10, y: (Math.random() - 0.5) / 10, z: (Math.random() - 0.5) / 10 }
         });
-        mesh.scale.set(0.04 + Math.random() / 8, 0.04 + Math.random() / 8, 0.04 + Math.random() / 8);
-        this.scene.add(mesh);
+
+        rock.mesh.scale.set(0.04 + Math.random() / 8, 0.04 + Math.random() / 8, 0.04 + Math.random() / 8);
+        rock.mesh.position.z = rock.x;
+        rock.mesh.position.x = rock.y;
+        rock.mesh.rotation.x = 0;
+        rock.mesh.rotation.y = 0;
+        rock.mesh.rotation.z = 0;
+
+        this.scene.add(rock.mesh);
+    }
+
+    remove(asteroid: asteroid, explode: boolean = false) {
+        asteroid.dead = true;
+        this.scene.remove(asteroid.mesh);
+        //this.rockBin.push(asteroid.mesh);
+        if(explode) {
+            this.explosions.add(asteroid.x, asteroid.y, asteroid.speed);
+        }
     }
 }
