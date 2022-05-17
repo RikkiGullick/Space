@@ -5,11 +5,12 @@ export class ExplosionSystem {
     explosions: { frame: number, sprite: THREE.Sprite, dead: boolean, speed: number }[] = [];
 
     constructor(private scene: Scene) {
+        const map = new TextureLoader().load( 'assets/explosion-l.png' );
         for(var i = 0; i< 100; i++) {
-            const map = new TextureLoader().load( 'assets/explosion-l.png' );
-            const material = new SpriteMaterial( { map: map } );
-            map.repeat.set(1/32,1);
-            map.offset.set(1/32*12, 0);
+            let mapClone = map.clone();
+            const material = new SpriteMaterial( { map: mapClone } );
+            mapClone.repeat.set(1/32,1);
+            mapClone.offset.set(1/32*12, 0);
             material.blending = AdditiveBlending;
             const sprite = new Sprite( material );
             sprite.scale.set(0.5, 0.5, 0.5);
@@ -17,7 +18,7 @@ export class ExplosionSystem {
         }
     }
 
-    add(x: number, y: number, speed: number) {
+    add(x: number, y: number, speed: number, sizeMultiplier: number = 1) {
         let sprite: Sprite;
         this.explosions = this.explosions.filter(x => !x.dead);
 
@@ -30,8 +31,8 @@ export class ExplosionSystem {
         sprite.position.z = x;
         sprite.position.x = y;
         sprite.material.rotation = Math.random() * Math.PI * 2;
-        const size = 0.25 + (Math.random() * 0.5);
-        sprite.scale.set(size, size, size);
+        const size = (0.25 + (Math.random() * 0.5)) * sizeMultiplier;
+        sprite.scale.set(size, size, size); 
         this.scene.add(sprite);
     }
 
@@ -42,7 +43,6 @@ export class ExplosionSystem {
 
             explosion.sprite.material.map?.offset.set(1/32 * explosion.frame, 0);
             explosion.sprite.position.z += explosion.speed;
-
             explosion.frame++;
             if(explosion.frame > 31) {
                 explosion.dead = true;
