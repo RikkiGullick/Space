@@ -9,19 +9,17 @@ export class Backgrounds {
         if(tick === 0) {
             let p: Mesh;
             this.planets.push(p = this.planet.clone());
-            p.position.y = -3;
-            p.position.x = 1;
-            this.scene.add(p);
-            this.planets.push(p = this.planet.clone());
-            p.position.y = -9;
-            p.position.x = 0;
-            p.position.z = 0;
+            p.position.y = -6;
+            p.position.x = .3;
+            p.position.z = -6;
+            p.scale.set(3, 3, 3);
             this.scene.add(p);
         }
         for(var i = 0; i < this.planets.length; i++) {
-            this.planets[i].position.z += 0.002;
+            this.planets[i].position.z += 0.004;
             this.planets[i].rotation.x += 0.001;
-            this.planets[i].rotation.z += 0.0004;
+            this.planets[i].rotation.z += 0.0005;
+            this.planets[i].position.y += 0.001;
         }
     }
 }

@@ -6,7 +6,7 @@ interface MeshLoaderData {
     url: string;
 }
 
-interface LoadedMeshes { [Key: string]: Mesh }
+interface LoadedMeshes { [Key: string]: Mesh | Mesh[] }
 const loader = new GLTFLoader();
 
 export class MeshLoader {
@@ -16,14 +16,15 @@ export class MeshLoader {
         for(let i = 0; i < data.length; i++) {
             const item = data[i];
             const mesh = await this.modelLoader(item.url);
-            results[item.name] = mesh;
+            if(mesh.length === 1) results[item.name] = mesh[0];
+            else results[item.name] = mesh;
         }
         return results;
     }
 
-    static modelLoader(url: string): Promise<Mesh> {
+    static modelLoader(url: string): Promise<Mesh[]> {
       return new Promise((resolve, reject) => {
-        loader.load(url, data => resolve(<THREE.Mesh>data.scene.children[0]), undefined, reject);
+        loader.load(url, data => resolve(<THREE.Mesh[]>data.scene.children), undefined, reject);
       });
     }
 }

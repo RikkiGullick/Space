@@ -1,4 +1,6 @@
+import { Mesh } from "three";
 import { Backgrounds } from "./backgrounds/backgrounds";
+import { Starfield } from "./backgrounds/starfield";
 import { Asteroids } from "./enemies/asteroids";
 import { Collitions } from "./enemies/collisions";
 import { ExplosionSystem } from "./enemies/explosions";
@@ -12,19 +14,19 @@ const space = new Space();
 let meshes = await MeshLoader.loadMeshes([
   { name: "ship", url: 'assets/ship1.glb' },
   { name: "planet", url: 'assets/planet.glb' },
-  { name: "rock", url: 'assets/rocks.glb' },
+  { name: "rock", url: 'assets/rocks2.glb' },
 ]);
-let player = new Player(meshes.ship);
-
-space.scene.add(player.mesh);
+console.log(meshes.rock);
+let player = new Player(<Mesh>meshes.ship, space.scene);
 let explosions = new ExplosionSystem(space.scene);
 let bullets = new BulletSystem(space.scene);
-let backgrounds = new Backgrounds(meshes.planet, space.scene);
-let asteroids = new Asteroids(meshes.rock, space.scene, explosions);
+let backgrounds = new Backgrounds(<Mesh>meshes.planet, space.scene);
+let asteroids = new Asteroids(<Mesh[]>meshes.rock, space.scene, explosions);
 let collitions = new Collitions(bullets, asteroids);
+let stars = new Starfield(space.scene); 
 
 let tick = 0;
-space.renderer.setAnimationLoop((time) => {
+space.renderer.setAnimationLoop(() => {
   player.render();
   bullets.render();
   backgrounds.render(tick);
@@ -32,9 +34,12 @@ space.renderer.setAnimationLoop((time) => {
   explosions.render();
   space.renderer.render( space.scene, space.camera );
   collitions.check();
+  stars.render();
 
   if(!(tick % 5)) {
-    bullets.add(player.x - 0.08, player.y, 0.0528);
+    bullets.add(player.x - 0.12, player.y, 0.0638, 0);
+    bullets.add(player.x - 0.12, player.y, 0.0528, 0.005);
+    bullets.add(player.x - 0.12, player.y, 0.0638, -0.005);
   }
   tick++;
 });

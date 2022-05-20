@@ -1,4 +1,4 @@
-import { Mesh } from "three";
+import { AdditiveBlending, Mesh, Scene, Sprite, SpriteMaterial, TextureLoader } from "three";
 
 export class Player {
     mesh: Mesh;
@@ -10,10 +10,21 @@ export class Player {
     oldDy: number = 0;
     mouseX: number = 0;
     mouseY: number = 0;
+    fire: Sprite;
 
-    constructor(ship: Mesh) {
+    constructor(ship: Mesh, scene: Scene) {
         this.mesh = ship;
         this.mesh.scale.set(0.04, 0.04, 0.04);
+
+        const fireMap = new TextureLoader().load( 'assets/laser-blast.png' );
+        const fireMat = new SpriteMaterial({ map: fireMap });
+        this.fire = new Sprite(fireMat);
+        this.fire.scale.set(0.07, 0.07, 0.07);
+        fireMap.repeat.set(1/16,1);
+        fireMat.blending = AdditiveBlending;
+        this.fire.renderOrder = 1;
+        scene.add(this.fire);
+        scene.add(ship);
 
         this.initMouse();
     }
@@ -24,7 +35,6 @@ export class Player {
             this.mouseY = (evt.clientY - (window.innerHeight / 2)) / 600
         });
     }
-
 
     render() {
         let dx = this.mouseX - this.x;
@@ -38,6 +48,12 @@ export class Player {
         this.mesh.position.x = this.y;
         this.mesh.position.z = this.x;
         this.mesh.rotation.z = this.rotation;
+
+        this.fire.position.set(this.y, 0, this.x - 0.105);
+        this.fire.material.map?.offset.set(1/16 * Math.round(Math.random() * 15), 0);
+        this.fire.material.rotation = Math.random() * Math.PI * 2;
+        this.fire.material.opacity = 1 + Math.random() * 2;
+
     }
 
     calcRotation(dy: number) {      

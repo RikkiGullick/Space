@@ -16,12 +16,12 @@ export class Space {
     }
 
     private initLight() {
-        const light = new DirectionalLight(0xFFFFFF, 2);
+        const light = new DirectionalLight(0xFFFFFF, 3);
         light.position.set(-20, 2, 2);
         this.scene.add( light );
 
-        const light2 = new DirectionalLight(0x8800FF, 0.5);
-        light2.position.set(10, 2, 2);
+        const light2 = new DirectionalLight(0x8800FF, 1);
+        light2.position.set(10, 2, -2);
         this.scene.add( light2 );
     }
 
